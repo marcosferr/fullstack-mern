@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -22,6 +23,15 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   if (!product) {
     return <div>Loading...</div>;
   }
@@ -31,6 +41,7 @@ const ProductDetail = () => {
       <h2>{product.title}</h2>
       <p>Price: {product.price}</p>
       <p>Description: {product.description}</p>
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 };
