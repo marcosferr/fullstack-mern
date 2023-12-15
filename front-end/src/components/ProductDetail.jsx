@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import DeleteButton from "./DeleteButton";
+import { Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,13 +25,8 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
-      navigate("/");
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
+  const handleEdit = () => {
+    navigate(`/${id}/edit`);
   };
 
   if (!product) {
@@ -37,11 +34,16 @@ const ProductDetail = () => {
   }
 
   return (
-    <div>
+    <div className="product-detailed">
       <h2>{product.title}</h2>
       <p>Price: {product.price}</p>
       <p>Description: {product.description}</p>
-      <button onClick={handleDelete}>Delete</button>
+      <div className="button-group">
+        <Button onClick={handleEdit} endIcon={<EditIcon />}>
+          Edit
+        </Button>
+        <DeleteButton id={id} />
+      </div>
     </div>
   );
 };

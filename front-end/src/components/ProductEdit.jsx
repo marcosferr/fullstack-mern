@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import ProductForm from "./ProductForm";
+import DeleteButton from "./DeleteButton";
 const ProductEdit = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState({
-    title: "",
-    price: 0,
-    description: "",
-  });
+  const [product, setProduct] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -25,9 +22,7 @@ const ProductEdit = () => {
     fetchProduct();
   }, [id]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleUpdate = async (product) => {
     try {
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/products/${id}`,
@@ -39,45 +34,15 @@ const ProductEdit = () => {
       // Handle error
     }
   };
-
-  const handleChange = (e) => {
-    setProduct({
-      ...product,
-      [e.target.name]: e.target.value,
-    });
-  };
+  if (!product) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={product.title}
-          onChange={handleChange}
-        />
-
-        <label htmlFor="price">Price:</label>
-        <input
-          type="number"
-          id="price"
-          name="price"
-          value={product.price}
-          onChange={handleChange}
-        />
-
-        <label htmlFor="description">Description:</label>
-        <textarea
-          id="description"
-          name="description"
-          value={product.description}
-          onChange={handleChange}
-        ></textarea>
-
-        <button type="submit">Submit</button>
-      </form>
+      <h2>Edit Product</h2>
+      <ProductForm onSubmit={handleUpdate} initialValues={product} />
+      <DeleteButton id={id} />
     </div>
   );
 };
